@@ -2,66 +2,278 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Joke Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #fff6e9;
+      --bg-deep: #ffd8a8;
+      --card: rgba(255, 255, 255, 0.84);
+      --text: #1e2432;
+      --muted: #5b6474;
+      --accent: #ff7a18;
+      --accent-strong: #ff4f6d;
+      --line: rgba(30, 36, 50, 0.12);
+      --shadow: 0 22px 50px rgba(31, 36, 50, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f4f4f9;
-      padding: 50px;
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 122, 24, 0.28), transparent 26%),
+        radial-gradient(circle at 85% 18%, rgba(255, 79, 109, 0.2), transparent 22%),
+        linear-gradient(180deg, #fff9f0 0%, #ffe7c3 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .page-shell {
+      width: min(100%, 920px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .generator-card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(14px);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 28px 28px 12px;
+      background:
+        linear-gradient(135deg, rgba(255, 122, 24, 0.96), rgba(255, 79, 109, 0.92));
+      color: white;
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      background: rgba(255, 255, 255, 0.12);
+      font-weight: 700;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-weight: 800;
+      opacity: 0.85;
     }
 
     h1 {
-      color: #333;
+      margin: 0;
+      font-family: "Space Grotesk", Arial, sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.75rem);
+      line-height: 0.95;
+    }
+
+    .hero p:last-child {
+      margin: 14px 0 8px;
+      max-width: 540px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      opacity: 0.92;
+    }
+
+    .content {
+      padding: 28px;
+      text-align: center;
+    }
+
+    .control-panel {
+      display: grid;
+      grid-template-columns: 1.1fr auto;
+      gap: 16px;
+      align-items: end;
+      margin: 0 auto 22px;
+      max-width: 680px;
+    }
+
+    .field-group {
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--muted);
     }
 
     select, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 1rem;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      font-family: inherit;
+    }
+
+    select {
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--text);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
     }
 
     button {
-      background-color: #4CAF50;
+      width: auto;
+      min-width: 210px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
       color: white;
       cursor: pointer;
+      border: 0;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      box-shadow: 0 14px 26px rgba(255, 79, 109, 0.28);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
     }
 
     button:hover {
-      background-color: #45a049;
+      transform: translateY(-2px);
+      filter: brightness(1.03);
+      box-shadow: 0 18px 32px rgba(255, 79, 109, 0.3);
     }
 
     #joke {
-      margin-top: 30px;
-      font-size: 20px;
-      color: #222;
-      min-height: 50px;
+      margin: 26px auto 0;
+      min-height: 150px;
+      max-width: 700px;
+      padding: 28px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 245, 231, 0.95));
+      border: 1px solid rgba(30, 36, 50, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+      line-height: 1.7;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .joke-placeholder {
+      color: var(--muted);
+    }
+
+    .emoji-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 22px;
+      font-size: 1.4rem;
+      opacity: 0.7;
     }
 
     canvas {
       position: fixed;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
+      z-index: 0;
+    }
+
+    @media (max-width: 720px) {
+      .hero,
+      .content {
+        padding: 20px;
+      }
+
+      .nav-links {
+        justify-content: center;
+        margin-bottom: 32px;
+      }
+
+      .control-panel {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      #joke {
+        min-height: 180px;
+        padding: 22px;
+      }
     }
   </style>
 </head>
 <body>
+  <main class="page-shell">
+    <section class="generator-card">
+      <div class="hero">
+        <div class="nav-links">
+          <a href="index.html">Go to My Resume</a>
+          <a href="fromScratch.html">Go to Spikeball Page</a>
+        </div>
+        <p class="eyebrow">Single-Page AI Project</p>
+        <h1>Joke Generator</h1>
+        <p>Pick a vibe, hit the button, and get a quick joke with a little celebration built in.</p>
+      </div>
 
-  <h1>😂 Joke Generator</h1>
+      <div class="content">
+        <div class="control-panel">
+          <div class="field-group">
+            <label for="category">Choose a category</label>
+            <select id="category">
+              <option value="animals">Animals 🐶</option>
+              <option value="puns">Puns 😄</option>
+              <option value="food">Food 🍕</option>
+            </select>
+          </div>
 
-  <label for="category">Choose a category:</label><br>
-  <select id="category">
-    <option value="animals">Animals 🐶</option>
-    <option value="puns">Puns 😄</option>
-    <option value="food">Food 🍕</option>
-  </select><br>
+          <button onclick="generateJoke()">Tell me a joke!</button>
+        </div>
 
-  <button onclick="generateJoke()">Tell me a joke!</button>
+        <div id="joke">
+          <span class="joke-placeholder">Your next joke will appear here.</span>
+        </div>
 
-  <div id="joke"></div>
+        <div class="emoji-row" aria-hidden="true">
+          <span>😂</span>
+          <span>🎉</span>
+          <span>✨</span>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <canvas id="confetti"></canvas>
 
@@ -70,17 +282,26 @@
       animals: [
         "Why don’t elephants use computers? Because they’re afraid of the mouse!",
         "What do you call a fish wearing a bowtie? Sofishticated.",
-        "Why did the cow win an award? Because it was outstanding in its field!"
+        "Why did the cow win an award? Because it was outstanding in its field!",
+        "Why did the duck get a time-out? Because it was being a wise quacker.",
+        "What do you call an alligator in a vest? An investigator.",
+        "Why do seagulls fly over the ocean? Because if they flew over the bay, they’d be bagels."
       ],
       puns: [
         "I used to be a baker, but I couldn’t make enough dough.",
         "I’m reading a book about anti-gravity. It’s impossible to put down!",
-        "I would tell you a construction joke… but I’m still working on it."
+        "I would tell you a construction joke… but I’m still working on it.",
+        "I used to play piano by ear, but now I use my hands.",
+        "I’m friends with all electricians. We have great current connections.",
+        "I wondered why the baseball kept getting bigger. Then it hit me."
       ],
       food: [
         "Why did the tomato blush? Because it saw the salad dressing!",
         "What did the bread say to the butter? You're on a roll!",
-        "Why don’t eggs tell jokes? They’d crack each other up!"
+        "Why don’t eggs tell jokes? They’d crack each other up!",
+        "Why did the cookie go to the doctor? Because it felt crummy.",
+        "What kind of room doesn’t have doors? A mushroom.",
+        "Why did the banana go to the party? Because it was a-peeling."
       ]
     };
 
