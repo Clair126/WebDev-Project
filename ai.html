@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Joke Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f4f4f9;
+      padding: 50px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #joke {
+      margin-top: 30px;
+      font-size: 20px;
+      color: #222;
+      min-height: 50px;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>😂 Joke Generator</h1>
+
+  <label for="category">Choose a category:</label><br>
+  <select id="category">
+    <option value="animals">Animals 🐶</option>
+    <option value="puns">Puns 😄</option>
+    <option value="food">Food 🍕</option>
+  </select><br>
+
+  <button onclick="generateJoke()">Tell me a joke!</button>
+
+  <div id="joke"></div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    const jokes = {
+      animals: [
+        "Why don’t elephants use computers? Because they’re afraid of the mouse!",
+        "What do you call a fish wearing a bowtie? Sofishticated.",
+        "Why did the cow win an award? Because it was outstanding in its field!"
+      ],
+      puns: [
+        "I used to be a baker, but I couldn’t make enough dough.",
+        "I’m reading a book about anti-gravity. It’s impossible to put down!",
+        "I would tell you a construction joke… but I’m still working on it."
+      ],
+      food: [
+        "Why did the tomato blush? Because it saw the salad dressing!",
+        "What did the bread say to the butter? You're on a roll!",
+        "Why don’t eggs tell jokes? They’d crack each other up!"
+      ]
+    };
+
+    function generateJoke() {
+      const category = document.getElementById("category").value;
+      const jokeList = jokes[category];
+      const randomJoke = jokeList[Math.floor(Math.random() * jokeList.length)];
+      document.getElementById("joke").textContent = randomJoke;
+
+      launchConfetti();
+    }
+
+    // Confetti Effect
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let pieces = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    function createConfettiPiece() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 8 + 4,
+        speed: Math.random() * 3 + 2,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`
+      };
+    }
+
+    function launchConfetti() {
+      pieces = [];
+      for (let i = 0; i < 150; i++) {
+        pieces.push(createConfettiPiece());
+      }
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      pieces.forEach(p => {
+        p.y += p.speed;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+      });
+
+      pieces = pieces.filter(p => p.y < canvas.height);
+
+      if (pieces.length > 0) {
+        requestAnimationFrame(animateConfetti);
+      }
+    }
+  </script>
+
+</body>
+</html>
